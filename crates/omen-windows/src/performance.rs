@@ -30,9 +30,7 @@ pub fn set_performance_mode(mode: PerformanceMode) -> Result<(), OmenError> {
 }
 
 pub fn current_mode() -> PerformanceMode {
-    let out = Command::new("powercfg")
-        .args(["/getactivescheme"])
-        .output();
+    let out = Command::new("powercfg").args(["/getactivescheme"]).output();
     if let Ok(o) = out {
         let s = String::from_utf8_lossy(&o.stdout);
         if s.contains(HIGH_PERF) {

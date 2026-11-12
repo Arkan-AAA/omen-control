@@ -5,12 +5,15 @@ hardware control for HP OMEN / HyperX laptops.
 
 Status: Milestone 0 — Windows read-only vitals + UI skeleton.
 
-## Features (M0)
+## Features
 
-- Device detection via SMBIOS/WMI
-- CPU/GPU temperature, CPU/GPU usage, fan RPM (best effort)
-- Slint-based native UI (mock device by default)
-- Cross-platform-ready core (`omen-core`)
+- Dashboard with live vitals (CPU/GPU temp, usage, fan RPM)
+- Performance mode switching (Balanced/Performance/Quiet via power plans)
+- Fan speed control (best-effort via Win32_Fan, may require admin)
+- RGB lighting (best-effort via HP TyphonChasisLightingSDK)
+- Network throughput monitoring
+- System vitals overview
+- Native Slint UI (dark theme)
 
 ## Build (Windows)
 
