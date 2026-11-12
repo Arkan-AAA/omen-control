@@ -7,6 +7,7 @@ export component AppWindow inherits Window {
     in property <string> cpu-usage: "n/a";
     in property <string> gpu-usage: "n/a";
     in property <string> perf-status: "n/a";
+    in property <string> fan-status: "n/a";
     in property <string> net-rx: "n/a";
     in property <string> net-tx: "n/a";
     in-out property <int> current-page: 0;
@@ -111,7 +112,15 @@ export component AppWindow inherits Window {
                 if current-page == 3 : VerticalBox {
                     Text { text: "Fans"; font-size: 30px; font-weight: 700; color: #fff; }
                     Text { text: "Fan speed: " + root.fan-rpm; color: #aaa; }
-                    Text { text: "Manual fan curve editor coming soon."; color: #666; }
+                    Text { text: "Manual fan speed (0-100%):"; color: #888; font-size: 12px; }
+                    Slider {
+                        minimum: 0;
+                        maximum: 100;
+                        value: 50;
+                        changed(v) => { root.set-fan-speed(v); }
+                    }
+                    Text { text: "Note: may require admin privileges."; color: #666; font-size: 11px; }
+                    Text { text: root.fan-status; color: #aaa; }
                 }
 
                 if current-page == 4 : VerticalBox {

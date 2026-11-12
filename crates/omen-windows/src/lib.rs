@@ -4,6 +4,7 @@ use omen_core::{
 };
 
 pub mod detect;
+pub mod fan;
 pub mod performance;
 pub mod vitals;
 
@@ -58,6 +59,10 @@ impl OmenDevice for WindowsDevice {
         Err(OmenError::Unsupported(
             "fan curve writes require helper (next milestone)".into(),
         ))
+    }
+
+    fn set_fan_speed(&self, rpm: u32) -> Result<(), OmenError> {
+        fan::set_fan_speed(rpm)
     }
 
     fn rgb_zones(&self) -> Vec<RgbZone> {

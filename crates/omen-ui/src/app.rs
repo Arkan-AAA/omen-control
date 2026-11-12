@@ -55,6 +55,26 @@ pub fn run(device: Box<dyn OmenDevice>) -> Result<(), slint::PlatformError> {
         });
     });
 
+    let weak_for_fan = ui.as_weak();
+    let dev_for_fan = device.clone();
+    ui.on_set_fan_speed(move |v| {
+        let dev = dev_for_fan.clone();
+        let weak = weak_for_fan.clone();
+        std::thread::spawn(move || {
+            let rpm = (v as u32).saturating_mul(50); // 0-100 -> 0-5000
+            let msg = match dev.set_fan_speed(rpm) {
+                Ok(_) => format!("Fan set to {} ({} rpm target)", v, rpm),
+                Err(e) => format!("Fan failed: {}", e),
+            };
+            let w = weak.clone();
+            slint::invoke_from_event_loop(move || {
+                if let Some(ui) = w.upgrade() {
+                    ui.set_fan_status(msg.into());
+                }
+            })
+            .ok();
+        });
+    });
     let weak = ui.as_weak();
     let dev = device.clone();
     std::thread::spawn(move || {

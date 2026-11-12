@@ -18,7 +18,7 @@ pub fn set_performance_mode(mode: PerformanceMode) -> Result<(), OmenError> {
     let status = Command::new("powercfg")
         .args(["/setactive", guid])
         .status()
-        .map_err(|e| OmenError::Io(e))?;
+        .map_err(OmenError::Io)?;
     if status.success() {
         Ok(())
     } else {

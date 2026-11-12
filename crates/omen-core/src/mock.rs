@@ -64,6 +64,10 @@ impl OmenDevice for MockDevice {
         Ok(())
     }
 
+    fn set_fan_speed(&self, _rpm: u32) -> Result<(), OmenError> {
+        Ok(())
+    }
+
     fn rgb_zones(&self) -> Vec<RgbZone> {
         vec![]
     }
