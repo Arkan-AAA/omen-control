@@ -71,8 +71,14 @@ impl OmenDevice for WindowsDevice {
     }
 
     fn network_stats(&self) -> Result<NetworkStats, OmenError> {
-        Err(OmenError::Unsupported(
-            "network stats require implementation (next milestone)".into(),
-        ))
+        use sysinfo::Networks;
+        let networks = Networks::new_with_refreshed_list().unwrap_or_else(|_| Networks::new().unwrap());
+        let mut rx = 0u64;
+        let mut tx = 0u64;
+        for (_name, net) in &networks {
+            rx = rx.saturating_add(net.total_received());
+            tx = tx.saturating_add(net.total_transmitted());
+        }
+        Ok(NetworkStats { rx_bytes: rx, tx_bytes: tx })
     }
 }

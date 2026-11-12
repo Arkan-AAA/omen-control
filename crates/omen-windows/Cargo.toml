@@ -8,6 +8,7 @@ license.workspace = true
 omen-core.workspace = true
 serde.workspace = true
 nvml-wrapper.workspace = true
+sysinfo.workspace = true
 tracing.workspace = true
 wmi.workspace = true
 thiserror.workspace = true

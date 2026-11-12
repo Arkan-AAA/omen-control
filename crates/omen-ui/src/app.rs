@@ -14,6 +14,18 @@ fn fmt_pct(v: Option<f32>) -> String {
         .unwrap_or_else(|| "n/a".into())
 }
 
+fn format_bytes(b: u64) -> String {
+    if b >= 1_000_000_000 {
+        format!("{:.2} GB", b as f64 / 1_000_000_000.0)
+    } else if b >= 1_000_000 {
+        format!("{:.2} MB", b as f64 / 1_000_000.0)
+    } else if b >= 1_000 {
+        format!("{:.2} KB", b as f64 / 1_000.0)
+    } else {
+        format!("{} B", b)
+    }
+}
+
 pub fn run(device: Box<dyn OmenDevice>) -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
     let device = Arc::new(device);
@@ -47,17 +59,24 @@ pub fn run(device: Box<dyn OmenDevice>) -> Result<(), slint::PlatformError> {
     let dev = device.clone();
     std::thread::spawn(move || {
         loop {
-            let (cpu, gpu, fan, cpuu, gpuu) = match dev.vitals() {
-                Ok(v) => (
-                    fmt_temp(v.cpu_temp_c),
-                    fmt_temp(v.gpu_temp_c),
-                    v.fan_rpm
-                        .map(|x| x.to_string())
-                        .unwrap_or_else(|| "n/a".into()),
-                    fmt_pct(v.cpu_usage),
-                    fmt_pct(v.gpu_usage),
-                ),
+            let (cpu, gpu, fan, cpuu, gpuu, rx, tx) = match dev.vitals() {
+                Ok(v) => {
+                    let net = dev.network_stats().unwrap_or_default();
+                    (
+                        fmt_temp(v.cpu_temp_c),
+                        fmt_temp(v.gpu_temp_c),
+                        v.fan_rpm
+                            .map(|x| x.to_string())
+                            .unwrap_or_else(|| "n/a".into()),
+                        fmt_pct(v.cpu_usage),
+                        fmt_pct(v.gpu_usage),
+                        format_bytes(net.rx_bytes),
+                        format_bytes(net.tx_bytes),
+                    )
+                }
                 Err(_) => (
+                    "n/a".into(),
+                    "n/a".into(),
                     "n/a".into(),
                     "n/a".into(),
                     "n/a".into(),
@@ -74,6 +93,8 @@ pub fn run(device: Box<dyn OmenDevice>) -> Result<(), slint::PlatformError> {
                     ui.set_fan_rpm(fan.into());
                     ui.set_cpu_usage(cpuu.into());
                     ui.set_gpu_usage(gpuu.into());
+                    ui.set_net_rx(rx.into());
+                    ui.set_net_tx(tx.into());
                 }
             });
             if result.is_err() {
