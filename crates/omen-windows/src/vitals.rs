@@ -14,15 +14,21 @@ struct Proc {
     LoadPercentage: Option<u8>,
 }
 
+#[allow(non_snake_case)]
+#[derive(Deserialize)]
+struct Fan {
+    DesiredSpeed: Option<u32>,
+}
+
 #[allow(clippy::collapsible_if)]
 pub fn read_vitals() -> Vitals {
     let mut v = Vitals::default();
 
     if let Ok(con) = WMIConnection::with_namespace_path("ROOT\\WMI") {
-        if let Ok(mut thermals) =
+        if let Ok(thermals) =
             con.raw_query::<Thermal>("SELECT CurrentTemperature FROM MSAcpi_ThermalZoneTemperature")
         {
-            if let Some(t) = thermals.pop() {
+            if let Some(t) = thermals.into_iter().next() {
                 if let Some(tt) = t.CurrentTemperature {
                     v.cpu_temp_c = Some((tt as f32 / 10.0) - 273.15);
                 }
@@ -31,9 +37,14 @@ pub fn read_vitals() -> Vitals {
     }
 
     if let Ok(con) = WMIConnection::new() {
-        if let Ok(mut procs) = con.raw_query::<Proc>("SELECT LoadPercentage FROM Win32_Processor") {
-            if let Some(p) = procs.pop() {
+        if let Ok(procs) = con.raw_query::<Proc>("SELECT LoadPercentage FROM Win32_Processor") {
+            if let Some(p) = procs.into_iter().next() {
                 v.cpu_usage = p.LoadPercentage.map(|x| x as f32);
+            }
+        }
+        if let Ok(fans) = con.raw_query::<Fan>("SELECT DesiredSpeed FROM Win32_Fan") {
+            if let Some(f) = fans.into_iter().next() {
+                v.fan_rpm = f.DesiredSpeed;
             }
         }
     }
