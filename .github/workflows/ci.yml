@@ -1,0 +1,14 @@
+name: CI
+on: [push, pull_request]
+jobs:
+  test:
+    runs-on: windows-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: dtolnay/rust-toolchain@stable
+        with:
+          components: rustfmt, clippy
+      - run: cargo fmt --check
+      - run: cargo clippy --workspace -- -D warnings
+      - run: cargo test --workspace
+      - run: cargo build -p omen-ui --features real
