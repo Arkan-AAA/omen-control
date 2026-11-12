@@ -4,6 +4,7 @@ use omen_core::{
 };
 
 pub mod detect;
+pub mod performance;
 pub mod vitals;
 
 pub struct WindowsDevice {
@@ -40,13 +41,11 @@ impl OmenDevice for WindowsDevice {
     }
 
     fn current_mode(&self) -> PerformanceMode {
-        PerformanceMode::Balanced
+        performance::current_mode()
     }
 
-    fn set_performance_mode(&self, _mode: PerformanceMode) -> Result<(), OmenError> {
-        Err(OmenError::Unsupported(
-            "performance mode switching requires helper (next milestone)".into(),
-        ))
+    fn set_performance_mode(&self, mode: PerformanceMode) -> Result<(), OmenError> {
+        performance::set_performance_mode(mode)
     }
 
     fn fan_curve(&self) -> Result<FanCurve, OmenError> {

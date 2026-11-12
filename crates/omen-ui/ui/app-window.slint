@@ -1,4 +1,4 @@
-import { Button, VerticalBox, HorizontalBox, ScrollView, ComboBox, Slider } from "std-widgets.slint";
+import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     in property <string> cpu-temp: "n/a";
@@ -6,7 +6,10 @@ export component AppWindow inherits Window {
     in property <string> fan-rpm: "n/a";
     in property <string> cpu-usage: "n/a";
     in property <string> gpu-usage: "n/a";
+    in property <string> perf-status: "n/a";
     in-out property <int> current-page: 0;
+
+    callback set-performance-mode(string);
 
     width: 1100px;
     height: 700px;
@@ -14,7 +17,6 @@ export component AppWindow inherits Window {
     title: "OMEN Control";
 
     HorizontalBox {
-        // Sidebar
         Rectangle {
             width: 220px;
             background: #12121a;
@@ -34,7 +36,6 @@ export component AppWindow inherits Window {
             }
         }
 
-        // Main content
         Rectangle {
             background: #0a0a0f;
             VerticalBox {
@@ -45,32 +46,20 @@ export component AppWindow inherits Window {
                     Text { text: "Dashboard"; font-size: 28px; font-weight: 700; color: #fff; }
                     HorizontalBox {
                         spacing: 16px;
-                        Rectangle {
-                            background: #1a1a24;
-                            border-radius: 12px;
-                            width: 240px; height: 120px;
-                            VerticalBox {
-                                padding: 16px;
+                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
+                            VerticalBox { padding: 16px;
                                 Text { text: "CPU Temp"; color: #888; font-size: 12px; }
                                 Text { text: root.cpu-temp; font-size: 32px; font-weight: 700; color: #fff; }
                             }
                         }
-                        Rectangle {
-                            background: #1a1a24;
-                            border-radius: 12px;
-                            width: 240px; height: 120px;
-                            VerticalBox {
-                                padding: 16px;
+                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
+                            VerticalBox { padding: 16px;
                                 Text { text: "GPU Temp"; color: #888; font-size: 12px; }
                                 Text { text: root.gpu-temp; font-size: 32px; font-weight: 700; color: #fff; }
                             }
                         }
-                        Rectangle {
-                            background: #1a1a24;
-                            border-radius: 12px;
-                            width: 240px; height: 120px;
-                            VerticalBox {
-                                padding: 16px;
+                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
+                            VerticalBox { padding: 16px;
                                 Text { text: "Fan RPM"; color: #888; font-size: 12px; }
                                 Text { text: root.fan-rpm; font-size: 32px; font-weight: 700; color: #fff; }
                             }
@@ -78,22 +67,14 @@ export component AppWindow inherits Window {
                     }
                     HorizontalBox {
                         spacing: 16px;
-                        Rectangle {
-                            background: #1a1a24;
-                            border-radius: 12px;
-                            width: 240px; height: 120px;
-                            VerticalBox {
-                                padding: 16px;
+                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
+                            VerticalBox { padding: 16px;
                                 Text { text: "CPU Usage"; color: #888; font-size: 12px; }
                                 Text { text: root.cpu-usage; font-size: 32px; font-weight: 700; color: #fff; }
                             }
                         }
-                        Rectangle {
-                            background: #1a1a24;
-                            border-radius: 12px;
-                            width: 240px; height: 120px;
-                            VerticalBox {
-                                padding: 16px;
+                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
+                            VerticalBox { padding: 16px;
                                 Text { text: "GPU Usage"; color: #888; font-size: 12px; }
                                 Text { text: root.gpu-usage; font-size: 32px; font-weight: 700; color: #fff; }
                             }
@@ -103,7 +84,13 @@ export component AppWindow inherits Window {
 
                 if current-page == 1 : VerticalBox {
                     Text { text: "Performance"; font-size: 28px; font-weight: 700; color: #fff; }
-                    Text { text: "Performance mode switching coming soon."; color: #888; }
+                    HorizontalBox {
+                        spacing: 12px;
+                        Button { text: "Balanced"; clicked => { root.set-performance-mode("Balanced"); } }
+                        Button { text: "Performance"; clicked => { root.set-performance-mode("Performance"); } }
+                        Button { text: "Quiet"; clicked => { root.set-performance-mode("Quiet"); } }
+                    }
+                    Text { text: root.perf-status; color: #888; }
                 }
 
                 if current-page == 2 : VerticalBox {

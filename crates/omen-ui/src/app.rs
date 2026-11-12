@@ -1,4 +1,4 @@
-use omen_core::OmenDevice;
+use omen_core::{OmenDevice, PerformanceMode};
 use slint::ComponentHandle;
 use std::sync::Arc;
 
@@ -17,6 +17,31 @@ fn fmt_pct(v: Option<f32>) -> String {
 pub fn run(device: Box<dyn OmenDevice>) -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
     let device = Arc::new(device);
+
+    let weak_for_cb = ui.as_weak();
+    let dev_for_cb = device.clone();
+    ui.on_set_performance_mode(move |mode| {
+        let dev = dev_for_cb.clone();
+        let weak = weak_for_cb.clone();
+        std::thread::spawn(move || {
+            let pm = match mode.as_str() {
+                "Performance" => PerformanceMode::Performance,
+                "Quiet" => PerformanceMode::Quiet,
+                _ => PerformanceMode::Balanced,
+            };
+            let msg = match dev.set_performance_mode(pm) {
+                Ok(_) => format!("Mode set to {:?}", pm),
+                Err(e) => format!("Failed: {}", e),
+            };
+            let w = weak.clone();
+            slint::invoke_from_event_loop(move || {
+                if let Some(ui) = w.upgrade() {
+                    ui.set_perf_status(msg.into());
+                }
+            })
+            .ok();
+        });
+    });
 
     let weak = ui.as_weak();
     let dev = device.clone();
