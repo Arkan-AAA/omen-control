@@ -75,6 +75,35 @@ pub fn run(device: Box<dyn OmenDevice>) -> Result<(), slint::PlatformError> {
             .ok();
         });
     });
+    let weak_for_light = ui.as_weak();
+    let dev_for_light = device.clone();
+    ui.on_set_lighting_color(move |hex| {
+        let dev = dev_for_light.clone();
+        let weak = weak_for_light.clone();
+        std::thread::spawn(move || {
+            let hex = hex.trim_start_matches('#');
+            let (r, g, b) = if hex.len() == 6 {
+                (
+                    u8::from_str_radix(&hex[0..2], 16).unwrap_or(0),
+                    u8::from_str_radix(&hex[2..4], 16).unwrap_or(0),
+                    u8::from_str_radix(&hex[4..6], 16).unwrap_or(0),
+                )
+            } else {
+                (0, 0, 0)
+            };
+            let msg = match dev.set_rgb(0, omen_core::Rgb { r, g, b }) {
+                Ok(_) => format!("Color set to #{}", hex),
+                Err(e) => format!("Lighting failed: {}", e),
+            };
+            let w = weak.clone();
+            slint::invoke_from_event_loop(move || {
+                if let Some(ui) = w.upgrade() {
+                    ui.set_lighting_status(msg.into());
+                }
+            })
+            .ok();
+        });
+    });
     let weak = ui.as_weak();
     let dev = device.clone();
     std::thread::spawn(move || {

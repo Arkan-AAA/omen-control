@@ -8,12 +8,14 @@ export component AppWindow inherits Window {
     in property <string> gpu-usage: "n/a";
     in property <string> perf-status: "n/a";
     in property <string> fan-status: "n/a";
+    in property <string> lighting-status: "n/a";
     in property <string> net-rx: "n/a";
     in property <string> net-tx: "n/a";
     in-out property <int> current-page: 0;
 
     callback set-performance-mode(string);
     callback set-fan-speed(float);
+    callback set-lighting-color(string);
 
     width: 1200px;
     height: 760px;
@@ -106,7 +108,17 @@ export component AppWindow inherits Window {
 
                 if current-page == 2 : VerticalBox {
                     Text { text: "Lighting"; font-size: 30px; font-weight: 700; color: #fff; }
-                    Text { text: "RGB control coming soon (requires HID reverse engineering)."; color: #666; }
+                    Text { text: "Preset colors:"; color: #888; font-size: 12px; }
+                    HorizontalBox {
+                        spacing: 10px;
+                        Button { text: "Red"; clicked => { root.set-lighting-color("FF0000"); } }
+                        Button { text: "Green"; clicked => { root.set-lighting-color("00FF00"); } }
+                        Button { text: "Blue"; clicked => { root.set-lighting-color("0000FF"); } }
+                        Button { text: "White"; clicked => { root.set-lighting-color("FFFFFF"); } }
+                        Button { text: "Off"; clicked => { root.set-lighting-color("000000"); } }
+                    }
+                    Text { text: root.lighting-status; color: #aaa; }
+                    Text { text: "Note: RGB hardware control requires reverse engineering."; color: #666; font-size: 11px; }
                 }
 
                 if current-page == 3 : VerticalBox {
