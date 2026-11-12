@@ -50,7 +50,9 @@ impl OmenDevice for WindowsDevice {
     }
 
     fn fan_curve(&self) -> Result<FanCurve, OmenError> {
-        Ok(FanCurve::default())
+        Err(OmenError::Unsupported(
+            "fan curve read requires hardware support (next milestone)".into(),
+        ))
     }
 
     fn set_fan_curve(&self, _curve: FanCurve) -> Result<(), OmenError> {
@@ -70,6 +72,8 @@ impl OmenDevice for WindowsDevice {
     }
 
     fn network_stats(&self) -> Result<NetworkStats, OmenError> {
-        Ok(NetworkStats::default())
+        Err(OmenError::Unsupported(
+            "network stats require implementation (next milestone)".into(),
+        ))
     }
 }
