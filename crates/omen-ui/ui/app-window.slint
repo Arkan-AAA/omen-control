@@ -1,1 +1,11 @@
-// placeholder
+export component AppWindow inherits Window {
+    in property <string> cpu-temp: "n/a";
+    in property <string> gpu-temp: "n/a";
+    in property <string> fan-rpm: "n/a";
+    VerticalLayout {
+        Text { text: "OMEN Control"; font-size: 24px; }
+        Text { text: "CPU temp: " + cpu-temp; }
+        Text { text: "GPU temp: " + gpu-temp; }
+        Text { text: "Fan: " + fan-rpm; }
+    }
+}
