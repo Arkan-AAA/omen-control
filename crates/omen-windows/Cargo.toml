@@ -6,6 +6,7 @@ license.workspace = true
 
 [dependencies]
 omen-core.workspace = true
+serde.workspace = true
 sysinfo.workspace = true
 nvml-wrapper.workspace = true
 windows.workspace = true
