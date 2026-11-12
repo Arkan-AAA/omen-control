@@ -9,6 +9,11 @@ fn fmt_temp(v: Option<f32>) -> String {
         .unwrap_or_else(|| "n/a".into())
 }
 
+fn fmt_pct(v: Option<f32>) -> String {
+    v.map(|x| format!("{:.0}%", x))
+        .unwrap_or_else(|| "n/a".into())
+}
+
 pub fn run(device: Box<dyn OmenDevice>) -> Result<(), slint::PlatformError> {
     let ui = AppWindow::new()?;
     let device = Arc::new(device);
@@ -17,15 +22,23 @@ pub fn run(device: Box<dyn OmenDevice>) -> Result<(), slint::PlatformError> {
     let dev = device.clone();
     std::thread::spawn(move || {
         loop {
-            let (cpu, gpu, fan) = match dev.vitals() {
+            let (cpu, gpu, fan, cpuu, gpuu) = match dev.vitals() {
                 Ok(v) => (
                     fmt_temp(v.cpu_temp_c),
                     fmt_temp(v.gpu_temp_c),
                     v.fan_rpm
                         .map(|x| x.to_string())
                         .unwrap_or_else(|| "n/a".into()),
+                    fmt_pct(v.cpu_usage),
+                    fmt_pct(v.gpu_usage),
                 ),
-                Err(_) => ("n/a".into(), "n/a".into(), "n/a".into()),
+                Err(_) => (
+                    "n/a".into(),
+                    "n/a".into(),
+                    "n/a".into(),
+                    "n/a".into(),
+                    "n/a".into(),
+                ),
             };
 
             let wt = weak.clone();
@@ -34,6 +47,8 @@ pub fn run(device: Box<dyn OmenDevice>) -> Result<(), slint::PlatformError> {
                     ui.set_cpu_temp(cpu.into());
                     ui.set_gpu_temp(gpu.into());
                     ui.set_fan_rpm(fan.into());
+                    ui.set_cpu_usage(cpuu.into());
+                    ui.set_gpu_usage(gpuu.into());
                 }
             });
             if result.is_err() {
