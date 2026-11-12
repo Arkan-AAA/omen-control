@@ -1,4 +1,4 @@
-use crate::{types::*, error::OmenError};
+use crate::{error::OmenError, types::*};
 
 pub trait OmenDevice: Send + Sync {
     fn info(&self) -> DeviceInfo;

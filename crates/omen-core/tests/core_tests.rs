@@ -1,4 +1,4 @@
-use omen_core::{MockDevice, OmenDevice, PerformanceMode, Config};
+use omen_core::{Config, MockDevice, OmenDevice, PerformanceMode};
 
 #[test]
 fn mock_reports_vitals() {
@@ -10,7 +10,8 @@ fn mock_reports_vitals() {
 #[test]
 fn mock_switches_performance_mode() {
     let d = MockDevice::default();
-    d.set_performance_mode(PerformanceMode::Performance).unwrap();
+    d.set_performance_mode(PerformanceMode::Performance)
+        .unwrap();
     assert_eq!(d.current_mode(), PerformanceMode::Performance);
 }
 

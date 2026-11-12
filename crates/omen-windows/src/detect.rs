@@ -2,6 +2,7 @@ use omen_core::{DeviceInfo, OmenError};
 use serde::Deserialize;
 use wmi::WMIConnection;
 
+#[allow(non_snake_case)]
 #[derive(Deserialize)]
 struct Cs {
     Manufacturer: String,
@@ -9,11 +10,13 @@ struct Cs {
     SystemSKUNumber: Option<String>,
 }
 
+#[allow(non_snake_case)]
 #[derive(Deserialize)]
 struct Cpu {
     Name: String,
 }
 
+#[allow(non_snake_case)]
 #[derive(Deserialize)]
 struct Gpu {
     Name: String,
