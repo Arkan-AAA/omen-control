@@ -1,4 +1,4 @@
-import { Button, VerticalBox, HorizontalBox } from "std-widgets.slint";
+import { Button, VerticalBox, HorizontalBox, Slider } from "std-widgets.slint";
 
 export component AppWindow inherits Window {
     in property <string> cpu-temp: "n/a";
@@ -7,25 +7,29 @@ export component AppWindow inherits Window {
     in property <string> cpu-usage: "n/a";
     in property <string> gpu-usage: "n/a";
     in property <string> perf-status: "n/a";
+    in property <string> net-rx: "n/a";
+    in property <string> net-tx: "n/a";
     in-out property <int> current-page: 0;
 
     callback set-performance-mode(string);
+    callback set-fan-speed(float);
 
-    width: 1100px;
-    height: 700px;
-    background: #0a0a0f;
+    width: 1200px;
+    height: 760px;
+    background: #0d0d12;
     title: "OMEN Control";
 
     HorizontalBox {
+        // Sidebar
         Rectangle {
-            width: 220px;
-            background: #12121a;
+            width: 240px;
+            background: #13131c;
             VerticalBox {
-                padding: 20px;
-                spacing: 8px;
-                Text { text: "OMEN"; font-size: 24px; font-weight: 700; color: #ff4655; }
-                Text { text: "Control"; font-size: 12px; color: #666; }
-                Rectangle { height: 20px; }
+                padding: 24px;
+                spacing: 6px;
+                Text { text: "OMEN"; font-size: 26px; font-weight: 800; color: #ff4655; }
+                Text { text: "Control Center"; font-size: 11px; color: #555; letter-spacing: 1px; }
+                Rectangle { height: 24px; }
                 Button { text: "Dashboard"; clicked => { current-page = 0; } }
                 Button { text: "Performance"; clicked => { current-page = 1; } }
                 Button { text: "Lighting"; clicked => { current-page = 2; } }
@@ -36,86 +40,96 @@ export component AppWindow inherits Window {
             }
         }
 
+        // Main
         Rectangle {
-            background: #0a0a0f;
+            background: #0d0d12;
             VerticalBox {
-                padding: 30px;
-                spacing: 20px;
+                padding: 32px;
+                spacing: 24px;
 
                 if current-page == 0 : VerticalBox {
-                    Text { text: "Dashboard"; font-size: 28px; font-weight: 700; color: #fff; }
+                    Text { text: "Dashboard"; font-size: 30px; font-weight: 700; color: #fff; }
                     HorizontalBox {
-                        spacing: 16px;
-                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
-                            VerticalBox { padding: 16px;
-                                Text { text: "CPU Temp"; color: #888; font-size: 12px; }
-                                Text { text: root.cpu-temp; font-size: 32px; font-weight: 700; color: #fff; }
+                        spacing: 18px;
+                        Rectangle { background: #1a1a26; border-radius: 14px; width: 260px; height: 130px;
+                            VerticalBox { padding: 18px; spacing: 4px;
+                                Text { text: "CPU TEMPERATURE"; color: #666; font-size: 11px; }
+                                Text { text: root.cpu-temp; font-size: 36px; font-weight: 700; color: #fff; }
                             }
                         }
-                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
-                            VerticalBox { padding: 16px;
-                                Text { text: "GPU Temp"; color: #888; font-size: 12px; }
-                                Text { text: root.gpu-temp; font-size: 32px; font-weight: 700; color: #fff; }
+                        Rectangle { background: #1a1a26; border-radius: 14px; width: 260px; height: 130px;
+                            VerticalBox { padding: 18px; spacing: 4px;
+                                Text { text: "GPU TEMPERATURE"; color: #666; font-size: 11px; }
+                                Text { text: root.gpu-temp; font-size: 36px; font-weight: 700; color: #fff; }
                             }
                         }
-                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
-                            VerticalBox { padding: 16px;
-                                Text { text: "Fan RPM"; color: #888; font-size: 12px; }
-                                Text { text: root.fan-rpm; font-size: 32px; font-weight: 700; color: #fff; }
+                        Rectangle { background: #1a1a26; border-radius: 14px; width: 260px; height: 130px;
+                            VerticalBox { padding: 18px; spacing: 4px;
+                                Text { text: "FAN SPEED"; color: #666; font-size: 11px; }
+                                Text { text: root.fan-rpm; font-size: 36px; font-weight: 700; color: #fff; }
                             }
                         }
                     }
                     HorizontalBox {
-                        spacing: 16px;
-                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
-                            VerticalBox { padding: 16px;
-                                Text { text: "CPU Usage"; color: #888; font-size: 12px; }
-                                Text { text: root.cpu-usage; font-size: 32px; font-weight: 700; color: #fff; }
+                        spacing: 18px;
+                        Rectangle { background: #1a1a26; border-radius: 14px; width: 260px; height: 130px;
+                            VerticalBox { padding: 18px; spacing: 4px;
+                                Text { text: "CPU USAGE"; color: #666; font-size: 11px; }
+                                Text { text: root.cpu-usage; font-size: 36px; font-weight: 700; color: #fff; }
                             }
                         }
-                        Rectangle { background: #1a1a24; border-radius: 12px; width: 240px; height: 120px;
-                            VerticalBox { padding: 16px;
-                                Text { text: "GPU Usage"; color: #888; font-size: 12px; }
-                                Text { text: root.gpu-usage; font-size: 32px; font-weight: 700; color: #fff; }
+                        Rectangle { background: #1a1a26; border-radius: 14px; width: 260px; height: 130px;
+                            VerticalBox { padding: 18px; spacing: 4px;
+                                Text { text: "GPU USAGE"; color: #666; font-size: 11px; }
+                                Text { text: root.gpu-usage; font-size: 36px; font-weight: 700; color: #fff; }
                             }
                         }
                     }
                 }
 
                 if current-page == 1 : VerticalBox {
-                    Text { text: "Performance"; font-size: 28px; font-weight: 700; color: #fff; }
+                    Text { text: "Performance"; font-size: 30px; font-weight: 700; color: #fff; }
+                    Text { text: "Switch power profile (may require admin)."; color: #666; font-size: 12px; }
                     HorizontalBox {
                         spacing: 12px;
                         Button { text: "Balanced"; clicked => { root.set-performance-mode("Balanced"); } }
                         Button { text: "Performance"; clicked => { root.set-performance-mode("Performance"); } }
                         Button { text: "Quiet"; clicked => { root.set-performance-mode("Quiet"); } }
                     }
-                    Text { text: root.perf-status; color: #888; }
+                    Rectangle { background: #1a1a26; border-radius: 10px; height: 60px;
+                        VerticalBox { padding: 14px;
+                            Text { text: root.perf-status; color: #aaa; }
+                        }
+                    }
                 }
 
                 if current-page == 2 : VerticalBox {
-                    Text { text: "Lighting"; font-size: 28px; font-weight: 700; color: #fff; }
-                    Text { text: "RGB control coming soon."; color: #888; }
+                    Text { text: "Lighting"; font-size: 30px; font-weight: 700; color: #fff; }
+                    Text { text: "RGB control coming soon (requires HID reverse engineering)."; color: #666; }
                 }
 
                 if current-page == 3 : VerticalBox {
-                    Text { text: "Fans"; font-size: 28px; font-weight: 700; color: #fff; }
-                    Text { text: "Fan curve editor coming soon."; color: #888; }
+                    Text { text: "Fans"; font-size: 30px; font-weight: 700; color: #fff; }
+                    Text { text: "Fan speed: " + root.fan-rpm; color: #aaa; }
+                    Text { text: "Manual fan curve editor coming soon."; color: #666; }
                 }
 
                 if current-page == 4 : VerticalBox {
-                    Text { text: "System Vitals"; font-size: 28px; font-weight: 700; color: #fff; }
-                    Text { text: "Detailed sensors coming soon."; color: #888; }
+                    Text { text: "System Vitals"; font-size: 30px; font-weight: 700; color: #fff; }
+                    Text { text: "CPU: " + root.cpu-temp + "  |  GPU: " + root.gpu-temp; color: #aaa; }
+                    Text { text: "CPU usage: " + root.cpu-usage + "  |  GPU usage: " + root.gpu-usage; color: #aaa; }
                 }
 
                 if current-page == 5 : VerticalBox {
-                    Text { text: "Network"; font-size: 28px; font-weight: 700; color: #fff; }
-                    Text { text: "Network booster coming soon."; color: #888; }
+                    Text { text: "Network"; font-size: 30px; font-weight: 700; color: #fff; }
+                    Text { text: "Download: " + root.net-rx; color: #aaa; }
+                    Text { text: "Upload: " + root.net-tx; color: #aaa; }
+                    Text { text: "Network booster coming soon."; color: #666; }
                 }
 
                 if current-page == 6 : VerticalBox {
-                    Text { text: "Settings"; font-size: 28px; font-weight: 700; color: #fff; }
-                    Text { text: "Settings coming soon."; color: #888; }
+                    Text { text: "Settings"; font-size: 30px; font-weight: 700; color: #fff; }
+                    Text { text: "Settings coming soon."; color: #666; }
                 }
             }
         }
