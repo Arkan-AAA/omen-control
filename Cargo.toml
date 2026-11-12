@@ -7,6 +7,8 @@ version = "0.1.0"
 edition = "2024"
 license = "MIT OR Apache-2.0"
 authors = ["OMEN Control contributors"]
+description = "Open-source Rust rewrite of OMEN Gaming Hub (hardware control)"
+repository = "https://github.com/Arkan-AAA/omen-control"
 
 [workspace.dependencies]
 omen-core = { path = "crates/omen-core" }
