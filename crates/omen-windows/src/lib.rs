@@ -6,6 +6,7 @@ use omen_core::{
 pub mod detect;
 pub mod fan;
 pub mod performance;
+pub mod rgb;
 pub mod vitals;
 
 pub struct WindowsDevice {
@@ -69,10 +70,8 @@ impl OmenDevice for WindowsDevice {
         vec![]
     }
 
-    fn set_rgb(&self, _zone: u8, _color: Rgb) -> Result<(), OmenError> {
-        Err(OmenError::Unsupported(
-            "rgb writes require helper (next milestone)".into(),
-        ))
+    fn set_rgb(&self, zone: u8, color: Rgb) -> Result<(), OmenError> {
+        rgb::set_rgb(zone, color)
     }
 
     fn network_stats(&self) -> Result<NetworkStats, OmenError> {
